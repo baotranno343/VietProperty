@@ -27,7 +27,7 @@ class Controller_nha extends Controller
             ->join('quan', 'quan.id', '=', 'dia_chi.quan')
             ->join('phuong', 'phuong.id', '=', 'dia_chi.phuong')
             ->join('duong', 'duong.id', '=', 'dia_chi.duong')
-            ->select('nha.id as id_nha', 'nha.banner as banner', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'dia_chi.so_nha as so_nha', 'nha.mo_ta as mo_ta',"nha.gia as gia")
+            ->select('nha.id as id_nha', 'nha.banner as banner', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'dia_chi.so_nha as so_nha', 'nha.mo_ta as mo_ta', "nha.gia as gia")
             ->get();
         return response()->json($nha);
         // return new Resource_nha($nha);
@@ -51,19 +51,22 @@ class Controller_nha extends Controller
      */
     public function store(Request $request)
     {
-        $nha = Model_nha::create($request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'x', 'y', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'banner', 'mo_ta', 'trang_thai', 'duyet']));
-        // $nha = Model_nha::create(request());
+        $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'mo_ta', 'trang_thai', 'duyet']);
+
+
+        if ($file = $request->file('banner')) {
+
+            $name = uniqid() . "." . $file->extension();
+            $file->move(public_path('images'), $name);
+            $input["banner"] = $name;
+        } else {
+            $input["banner"] = "";
+        }
+        $nha = Model_nha::create($input);
         $nha->save();
-
-        $dia_chi = Model_dia_chi::create([
-            'id_nha' => $nha->id,
-            'thanh_pho' => $request->thanh_pho,
-            'quan' => $request->quan,
-            'phuong' => $request->phuong,
-            'duong' => $request->duong,
-            'so_nha' => $request->so_nha,
-
-        ]);
+        $input2 = $request->only(['thanh_pho', 'quan', 'phuong', 'duong', 'so_nha']);
+        $input2["id_nha"] = $nha->id;
+        $dia_chi = Model_dia_chi::create($input2);
         $dia_chi->save();
         if ($files = $request->file('images')) {
             foreach ($files as $file) {
@@ -88,10 +91,20 @@ class Controller_nha extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+    public function show_nha_by_idkh($id)
+    {
+        $nha =  DB::table('nha')
+            ->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')->join('dia_chi', 'nha.id', '=', 'dia_chi.id_nha')->join('thanh_pho', 'thanh_pho.id', '=', 'dia_chi.thanh_pho')->join('quan', 'quan.id', '=', 'dia_chi.quan')->join('phuong', 'phuong.id', '=', 'dia_chi.phuong')->join('duong', 'duong.id', '=', 'dia_chi.duong')->select('nha.id as id_nha', 'nha.banner as banner', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'dia_chi.so_nha as so_nha', 'nha.mo_ta as mo_ta', "nha.lat as lat", "nha.lon as lon")->where('nha.id_khach_hang', $id)->get();
+        // print_r($nha);
+        // $hinh = Model_hinh::where("id_nha", $id)->get();
+        // $dia_chi = Model_dia_chi::where("id_nha", $id)->get();
+        return response()->json(['nha' => $nha]);
+    }
+
     public function show($id)
     {
         $nha =  DB::table('nha')
-            ->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')->join('dia_chi', 'nha.id', '=', 'dia_chi.id_nha')->join('thanh_pho', 'thanh_pho.id', '=', 'dia_chi.thanh_pho')->join('quan', 'quan.id', '=', 'dia_chi.quan')->join('phuong', 'phuong.id', '=', 'dia_chi.phuong')->join('duong', 'duong.id', '=', 'dia_chi.duong')->select('nha.id as id_nha', 'nha.banner as banner', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'dia_chi.so_nha as so_nha', 'nha.mo_ta as mo_ta', "nha.x as x", "nha.y as y")->where('nha.id', $id)->first();
+            ->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')->join('dia_chi', 'nha.id', '=', 'dia_chi.id_nha')->join('thanh_pho', 'thanh_pho.id', '=', 'dia_chi.thanh_pho')->join('quan', 'quan.id', '=', 'dia_chi.quan')->join('phuong', 'phuong.id', '=', 'dia_chi.phuong')->join('duong', 'duong.id', '=', 'dia_chi.duong')->select('nha.id as id_nha', 'nha.banner as banner', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'dia_chi.so_nha as so_nha', 'nha.mo_ta as mo_ta', "nha.lat as lat", "nha.lon as lon")->where('nha.id', $id)->first();
         // print_r($nha);
         $hinh = Model_hinh::where("id_nha", $id)->get();
         $dia_chi = Model_dia_chi::where("id_nha", $id)->get();
@@ -118,23 +131,14 @@ class Controller_nha extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
-        // $nha = Model_nha::where("id", $id)->update([
-        //     'id_khach_hang' => $request->id_khach_hang,
-        //     'hinh_thuc' => $request->hinh_thuc,
-        //     'loai_nha' => $request->loai_nha,
-        //     'toa_do' => $request->toa_do,
-        //     'gia' => $request->gia,
-        //     'dien_tich' => $request->dien_tich,
-        //     'so_phong' => $request->so_phong,
-        //     'so_toilet' => $request->so_toilet,
-        //     'banner' => $request->banner,
-        //     'mo_ta' => $request->mo_ta,
-        //     'trang_thai' => $request->trang_thai,
-        //     'duyet' => $request->duyet,
+        $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'mo_ta', 'trang_thai', 'duyet']);
+        if ($file = $request->file('banner')) {
 
-        // ]);
-        $nha = Model_nha::where("id", $id)->update($request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'x', 'y', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'banner', 'mo_ta', 'trang_thai', 'duyet']));
+            $name = uniqid() . "." . $file->extension();
+            $file->move(public_path('images'), $name);
+            $input["banner"] = $name;
+        }
+        $nha = Model_nha::where("id", $id)->update($input);
         $dia_chi = Model_dia_chi::where("id", $id)->update($request->only(['id_nha', 'thanh_pho', 'quan', 'phuong', 'duong', 'so_nha']));
 
         return response()->json(["status" => "success"]);

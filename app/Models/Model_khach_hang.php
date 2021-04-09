@@ -12,5 +12,5 @@ class Model_khach_hang extends Model
     protected $table = 'khach_hang';
     protected $primaryKey = 'id';
     public $timestamps = false;
-    protected $fillable = ['email', 'sdt', 'mat_khau', 'ho_ten', 'dia_chi', 'chuc_vu'];
+    protected $fillable = ['email', 'sdt', 'mat_khau', 'ho_ten', 'dia_chi', 'chuc_vu', 'avatar'];
 }

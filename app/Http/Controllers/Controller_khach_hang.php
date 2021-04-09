@@ -36,8 +36,16 @@ class Controller_khach_hang extends Controller
     public function store(Request $request)
     {
         //
+        $input = $request->only(['email', 'sdt', 'mat_khau', 'ho_ten', 'dia_chi', 'chuc_vu']);
+        if ($file = $request->file('avatar')) {
 
-        Model_khach_hang::create($request->all());
+            $name = uniqid() . "." . $file->extension();
+            $file->move(public_path('images'), $name);
+            $input["avatar"] = $name;
+        } else {
+            $input["avatar"] = "";
+        }
+        Model_khach_hang::create($input);
         return response()->json(["status" => "success"]);
     }
 
@@ -70,10 +78,18 @@ class Controller_khach_hang extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function update(Request $request, $id)
     {
         // Model_khach_hang::where("id", $id)->update($request->all());
-        Model_khach_hang::where("id", $id)->update($request->all());
+        $input = $request->only(['email', 'sdt', 'mat_khau', 'ho_ten', 'dia_chi', 'chuc_vu']);
+        if ($file = $request->file('avatar')) {
+
+            $name = uniqid() . "." . $file->extension();
+            $file->move(public_path('images'), $name);
+            $input["avatar"] = $name;
+        }
+        Model_khach_hang::where("id", $id)->update($input);
         return response()->json(["status" => "success"]);
     }
 
