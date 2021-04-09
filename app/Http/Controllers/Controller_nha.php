@@ -133,13 +133,22 @@ class Controller_nha extends Controller
     {
         $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'mo_ta', 'trang_thai', 'duyet']);
         if ($file = $request->file('banner')) {
-
+            $nha = Model_nha::where("id", $id)->first();
+            if (Storage::disk('images')->exists($nha->banner)) {
+                Storage::disk('images')->delete($nha->banner);
+            }
             $name = uniqid() . "." . $file->extension();
             $file->move(public_path('images'), $name);
             $input["banner"] = $name;
         }
-        $nha = Model_nha::where("id", $id)->update($input);
-        $dia_chi = Model_dia_chi::where("id", $id)->update($request->only(['id_nha', 'thanh_pho', 'quan', 'phuong', 'duong', 'so_nha']));
+        if ($input) {
+            $nha = Model_nha::where("id", $id)->update($input);
+        }
+        $input2 = $request->only(['thanh_pho', 'quan', 'phuong', 'duong', 'so_nha']);
+        if ($input2) {
+            $dia_chi = Model_dia_chi::where("id_nha", $id)->update($input2);
+        }
+
 
         return response()->json(["status" => "success"]);
     }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Model_khach_hang;
+use Illuminate\Support\Facades\Storage;
 
 class Controller_khach_hang extends Controller
 {
@@ -81,10 +82,13 @@ class Controller_khach_hang extends Controller
 
     public function update(Request $request, $id)
     {
-        // Model_khach_hang::where("id", $id)->update($request->all());
+        //   Model_khach_hang::where("id", $id)->update($request->all());
         $input = $request->only(['email', 'sdt', 'mat_khau', 'ho_ten', 'dia_chi', 'chuc_vu']);
         if ($file = $request->file('avatar')) {
-
+            $khach_hang = Model_khach_hang::where("id", $id)->first();
+            if (Storage::disk('images')->exists($khach_hang->avatar)) {
+                Storage::disk('images')->delete($khach_hang->avatar);
+            }
             $name = uniqid() . "." . $file->extension();
             $file->move(public_path('images'), $name);
             $input["avatar"] = $name;

@@ -119,7 +119,11 @@ class Controller_hinh extends Controller
     }
     public function update(Request $request, $id)
     {
-        if ($file = $request->file('images')) {
+        if ($file = $request->file('link')) {
+            $hinh = Model_hinh::where("id", $id)->first();
+            if (Storage::disk('images')->exists($hinh->link)) {
+                Storage::disk('images')->delete($hinh->link);
+            }
             //  $name = uniqid() . $file->getClientOriginalName();
             $name = uniqid() . "." . $file->extension();
             //   Storage::put("public", $name);
@@ -133,14 +137,7 @@ class Controller_hinh extends Controller
             // ]);
 
         }
-        if ($file2 = $request->old_image) {
-            print_r(Storage::disk('images')->exists($file2));
 
-            if (Storage::disk('images')->exists($file2)) {
-
-                Storage::disk('images')->delete($file2);
-            }
-        }
         return response()->json(["status" => "success"]);
     }
 
