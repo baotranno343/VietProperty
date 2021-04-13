@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Model_khach_hang;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class Controller_khach_hang extends Controller
@@ -34,6 +35,13 @@ class Controller_khach_hang extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    public function dem_cac_khach_hang_dang_ky_cac_thang()
+    {
+
+        $nha = DB::table('khach_hang')
+            ->select(DB::raw('MONTH(khach_hang.ngay_tao) as thang,count(khach_hang.id) as tong_khach_hang '))->groupBy('thang')->get();
+        return $nha;
+    }
     public function store(Request $request)
     {
         //
@@ -49,7 +57,22 @@ class Controller_khach_hang extends Controller
         Model_khach_hang::create($input);
         return response()->json(["status" => "success"]);
     }
-
+    public function login(Request $request)
+    {
+        $status = "error";
+        //
+        if ($request->email) {
+            $khach_hang = Model_khach_hang::where("email", $request->email)->where("mat_khau", $request->mat_khau)->first();
+        } else if ($request->sdt) {
+            $khach_hang = Model_khach_hang::where("sdt", $request->sdt)->where("mat_khau", $request->mat_khau)->first();
+        } else {
+            $khach_hang = "";
+        }
+        if ($khach_hang) {
+            $status = "success";
+        }
+        return response()->json(["status" => $status, "khach_hang" => $khach_hang]);
+    }
     /**
      * Display the specified resource.
      *
@@ -105,6 +128,14 @@ class Controller_khach_hang extends Controller
      */
     public function destroy($id)
     {
+        $khach_hang = Model_khach_hang::find($id);
+        $avatar = $khach_hang->avatar;
+
+        if ($avatar) {
+            if (Storage::disk('images')->exists($avatar)) {
+                Storage::disk('images')->delete($avatar);
+            }
+        }
         Model_khach_hang::find($id)->delete();
         return response()->json(["status" => "success"]);
     }

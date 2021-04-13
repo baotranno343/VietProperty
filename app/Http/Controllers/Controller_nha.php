@@ -5,10 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Model_nha;
 use Illuminate\Support\Facades\DB;
-use App\Models\Model_dia_chi;
 use App\Models\Model_hinh;
 use Illuminate\Support\Facades\Storage;
-use App\Http\Resources\Resource_nha;
 
 class Controller_nha extends Controller
 {
@@ -21,13 +19,13 @@ class Controller_nha extends Controller
     {
 
         $nha =  DB::table('nha')
+            ->join('loai_nha', 'loai_nha.id', '=', 'nha.loai_nha')
             ->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')
-            ->join('dia_chi', 'nha.id', '=', 'dia_chi.id_nha')
-            ->join('thanh_pho', 'thanh_pho.id', '=', 'dia_chi.thanh_pho')
-            ->join('quan', 'quan.id', '=', 'dia_chi.quan')
-            ->join('phuong', 'phuong.id', '=', 'dia_chi.phuong')
-            ->join('duong', 'duong.id', '=', 'dia_chi.duong')
-            ->select('nha.id as id_nha', 'nha.banner as banner', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'dia_chi.so_nha as so_nha', 'nha.mo_ta as mo_ta', "nha.gia as gia")
+            ->join('thanh_pho', 'thanh_pho.id', '=', 'nha.thanh_pho')
+            ->join('quan', 'quan.id', '=', 'nha.quan')
+            ->join('phuong', 'phuong.id', '=', 'nha.phuong')
+            ->join('duong', 'duong.id', '=', 'nha.duong')
+            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")
             ->get();
         return response()->json($nha);
         // return new Resource_nha($nha);
@@ -51,7 +49,7 @@ class Controller_nha extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'mo_ta', 'trang_thai', 'duyet']);
+        $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'banner', 'mo_ta', 'thanh_pho', 'quan', 'phuong', 'duong', 'so_nha', 'trang_thai', 'duyet']);
 
 
         if ($file = $request->file('banner')) {
@@ -64,10 +62,6 @@ class Controller_nha extends Controller
         }
         $nha = Model_nha::create($input);
         $nha->save();
-        $input2 = $request->only(['thanh_pho', 'quan', 'phuong', 'duong', 'so_nha']);
-        $input2["id_nha"] = $nha->id;
-        $dia_chi = Model_dia_chi::create($input2);
-        $dia_chi->save();
         if ($files = $request->file('images')) {
             foreach ($files as $file) {
                 //  $name = uniqid() . $file->getClientOriginalName();
@@ -94,21 +88,71 @@ class Controller_nha extends Controller
     public function show_nha_by_idkh($id)
     {
         $nha =  DB::table('nha')
-            ->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')->join('dia_chi', 'nha.id', '=', 'dia_chi.id_nha')->join('thanh_pho', 'thanh_pho.id', '=', 'dia_chi.thanh_pho')->join('quan', 'quan.id', '=', 'dia_chi.quan')->join('phuong', 'phuong.id', '=', 'dia_chi.phuong')->join('duong', 'duong.id', '=', 'dia_chi.duong')->select('nha.id as id_nha', 'nha.banner as banner', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'dia_chi.so_nha as so_nha', 'nha.mo_ta as mo_ta', "nha.lat as lat", "nha.lon as lon")->where('nha.id_khach_hang', $id)->get();
-        // print_r($nha);
-        // $hinh = Model_hinh::where("id_nha", $id)->get();
-        // $dia_chi = Model_dia_chi::where("id_nha", $id)->get();
+            ->join('loai_nha', 'loai_nha.id', '=', 'nha.loai_nha')
+            ->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')
+            ->join('thanh_pho', 'thanh_pho.id', '=', 'nha.thanh_pho')
+            ->join('quan', 'quan.id', '=', 'nha.quan')
+            ->join('phuong', 'phuong.id', '=', 'nha.phuong')
+            ->join('duong', 'duong.id', '=', 'nha.duong')
+            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner',  'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")->where('nha.id_khach_hang', $id)->get();
+
         return response()->json(['nha' => $nha]);
     }
+    //thongke
+    public function dem_nha_theo_quan_dang_ban()
+    {
 
+        $nha = DB::table('nha')->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')
+            ->join('loai_nha', 'loai_nha.id', '=', 'nha.loai_nha')
+            ->join('thanh_pho', 'thanh_pho.id', '=', 'nha.thanh_pho')
+            ->join('quan', 'quan.id', '=', 'nha.quan')
+            ->join('phuong', 'phuong.id', '=', 'nha.phuong')
+            ->join('duong', 'duong.id', '=', 'nha.duong')
+            ->where("nha.trang_thai", 1)
+            ->select(DB::raw('count(nha.id) as tong_nha, quan._name as ten_quan'))->groupBy('ten_quan')->orderByDesc('tong_nha')->get();
+        return $nha;
+    }
+    public function dem_cac_loai_nha_dang_ban()
+    {
+
+        $nha = DB::table('nha')->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')
+            ->join('loai_nha', 'loai_nha.id', '=', 'nha.loai_nha')
+            ->join('thanh_pho', 'thanh_pho.id', '=', 'nha.thanh_pho')
+            ->join('quan', 'quan.id', '=', 'nha.quan')
+            ->join('phuong', 'phuong.id', '=', 'nha.phuong')
+            ->join('duong', 'duong.id', '=', 'nha.duong')
+            ->where("nha.trang_thai", 1)
+            ->select(DB::raw('count(nha.id) as tong_nha, loai_nha.ten as ten_loai_nha'))->groupBy('ten_loai_nha')->orderByDesc('tong_nha')->get();
+        return $nha;
+    }
+    public function dem_cac_nha_da_ban_trong_cac_thang()
+    {
+
+        $nha = DB::table('nha')->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')
+            ->join('loai_nha', 'loai_nha.id', '=', 'nha.loai_nha')
+            ->join('thanh_pho', 'thanh_pho.id', '=', 'nha.thanh_pho')
+            ->join('quan', 'quan.id', '=', 'nha.quan')
+            ->join('phuong', 'phuong.id', '=', 'nha.phuong')
+            ->join('duong', 'duong.id', '=', 'nha.duong')
+            ->where("nha.trang_thai", 2)
+            ->select(DB::raw('MONTH(nha.ngay_tao) as thang,count(nha.trang_thai) as da_ban '))->groupBy('thang')->get();
+        return $nha;
+    }
+    //thongke
     public function show($id)
     {
         $nha =  DB::table('nha')
-            ->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')->join('dia_chi', 'nha.id', '=', 'dia_chi.id_nha')->join('thanh_pho', 'thanh_pho.id', '=', 'dia_chi.thanh_pho')->join('quan', 'quan.id', '=', 'dia_chi.quan')->join('phuong', 'phuong.id', '=', 'dia_chi.phuong')->join('duong', 'duong.id', '=', 'dia_chi.duong')->select('nha.id as id_nha', 'nha.banner as banner', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'dia_chi.so_nha as so_nha', 'nha.mo_ta as mo_ta', "nha.lat as lat", "nha.lon as lon")->where('nha.id', $id)->first();
+            ->join('loai_nha', 'loai_nha.id', '=', 'nha.loai_nha')
+            ->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')
+            ->join('thanh_pho', 'thanh_pho.id', '=', 'nha.thanh_pho')
+            ->join('quan', 'quan.id', '=', 'nha.quan')
+            ->join('phuong', 'phuong.id', '=', 'nha.phuong')
+            ->join('duong', 'duong.id', '=', 'nha.duong')
+            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")->where('nha.id', $id)->first();
         // print_r($nha);
         $hinh = Model_hinh::where("id_nha", $id)->get();
-        $dia_chi = Model_dia_chi::where("id_nha", $id)->get();
-        return response()->json(['nha' => $nha, 'hinh' => $hinh, 'dia_chi' => $dia_chi]);
+
+        return response()->json(['nha' => $nha, 'hinh' => $hinh]);
     }
 
     /**
@@ -131,7 +175,7 @@ class Controller_nha extends Controller
      */
     public function update(Request $request, $id)
     {
-        $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'mo_ta', 'trang_thai', 'duyet']);
+        $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'banner', 'mo_ta', 'thanh_pho', 'quan', 'phuong', 'duong', 'so_nha', 'trang_thai', 'duyet']);
         if ($file = $request->file('banner')) {
             $nha = Model_nha::where("id", $id)->first();
             if (Storage::disk('images')->exists($nha->banner)) {
@@ -144,9 +188,19 @@ class Controller_nha extends Controller
         if ($input) {
             $nha = Model_nha::where("id", $id)->update($input);
         }
-        $input2 = $request->only(['thanh_pho', 'quan', 'phuong', 'duong', 'so_nha']);
-        if ($input2) {
-            $dia_chi = Model_dia_chi::where("id_nha", $id)->update($input2);
+        if ($files = $request->file('images')) {
+            foreach ($files as $file) {
+                //  $name = uniqid() . $file->getClientOriginalName();
+                $name = uniqid() . "." . $file->extension();
+                //   Storage::put("public", $name);
+                $file->move(public_path('images'), $name);
+                Model_hinh::insert([
+                    'id_nha' =>   $id,
+                    'link' =>  $name,
+
+                    //you can put other insertion here
+                ]);
+            }
         }
 
 
@@ -161,7 +215,6 @@ class Controller_nha extends Controller
      */
     public function destroy($id)
     {
-        Model_dia_chi::where("id_nha", $id)->delete();
         $all_hinh = Model_hinh::where("id_nha", $id)->get();
         foreach ($all_hinh as $hinh) {
             if (Storage::disk('images')->exists($hinh->link)) {
@@ -169,7 +222,15 @@ class Controller_nha extends Controller
             }
         }
         Model_hinh::where("id_nha", $id)->delete();
-        Model_nha::find($id)->delete();
+        $nha = Model_nha::find($id);
+        $banner = $nha->banner;
+
+        if ($banner) {
+            if (Storage::disk('images')->exists($banner)) {
+                Storage::disk('images')->delete($banner);
+            }
+        }
+        $nha->delete();
         return response()->json(["status" => "success"]);
     }
 }

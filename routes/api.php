@@ -37,6 +37,11 @@ Route::get('dia_chi/all/{id}', function ($id) {
 
 // Route::put('nha/dia_chi/{id}', [Controller_nha::class, 'update_hinh_by_id_nha']);
 // Route::post('hinh/{id}/update', [Controller_hinh::class, 'update_hinh']);
+Route::get('thong_ke/nha/thang', [Controller_nha::class, 'dem_cac_nha_da_ban_trong_cac_thang']);
+Route::get('thong_ke/nha/loai_nha', [Controller_nha::class, 'dem_cac_loai_nha_dang_ban']);
+Route::get('thong_ke/nha/quan', [Controller_nha::class, 'dem_nha_theo_quan_dang_ban']);
+Route::get('thong_ke/khach_hang/thang', [Controller_khach_hang::class, 'dem_cac_khach_hang_dang_ky_cac_thang']);
+Route::post('khach_hang/login', [Controller_khach_hang::class, 'login']);
 Route::apiResource('khach_hang', Controller_khach_hang::class);
 Route::apiResource('nha', Controller_nha::class);
 Route::apiResource('loai_nha', Controller_loai_nha::class);

@@ -91,32 +91,7 @@ class Controller_hinh extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update_hinh(Request $request, $id)
-    {
-        if ($file = $request->file('images')) {
-            //  $name = uniqid() . $file->getClientOriginalName();
-            $name = uniqid() . "." . $file->extension();
-            //   Storage::put("public", $name);
-            $file->move(public_path('images'), $name);
-            $hinh = Model_hinh::where("id", $id)->update(['link' => $name]);
-            // Model_hinh::insert([
-            //     'id_nha' =>  $request->id_nha,
-            //     'link' =>  $name,
 
-            //     //you can put other insertion here
-            // ]);
-
-        }
-        if ($file2 = $request->old_image) {
-            print_r(Storage::disk('images')->exists($file2));
-
-            if (Storage::disk('images')->exists($file2)) {
-
-                Storage::disk('images')->delete($file2);
-            }
-        }
-        return response()->json(["status" => "success"]);
-    }
     public function update(Request $request, $id)
     {
         if ($file = $request->file('link')) {
