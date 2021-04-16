@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Model_dia_chi;
+use App\Models\Model_thanh_pho;
+use App\Models\Model_quan;
+use App\Models\Model_phuong;
+use App\Models\Model_duong;
 
 class Controller_dia_chi extends Controller
 {
@@ -14,9 +17,32 @@ class Controller_dia_chi extends Controller
      */
     public function index()
     {
-        $dia_chi = Model_dia_chi::get();
-        return response()->json($dia_chi);
     }
+    public function lay_thanh_pho($thanh_pho = null, $quan = null)
+    {
+        $result = Model_thanh_pho::get();
+        if ($thanh_pho && !$quan) {
+            $result =  Model_quan::where("_province_id", $thanh_pho)->get();
+            return response()->json(["status" => "success", "quan" => $result]);
+        } else if ($thanh_pho && $quan) {
+            $result =  Model_phuong::where("_province_id", $thanh_pho)->where("_district_id", $quan)->get();
+            $result2 =  Model_duong::where("_province_id", $thanh_pho)->where("_district_id", $quan)->get();
+            return response()->json(["status" => "success", "phuong" => $result, "duong" => $result2]);
+        } else {
+            return response()->json(["status" => "success", "thanh_pho" => $result]);
+        }
+    }
+    // public function lay_quan_tu_thanh_pho($id_tp)
+    // {
+    //     Model_quan::where("_province_id", $id_tp)->get();
+    // }
+    // public function lay_phuong_tu_quan_va_thanh_pho($id_tp, $id_quan)
+    // {
+    //     Model_quan::where("_province_id", $id_tp)->where("_district_id", $id_quan)->get();
+    // }
+    // public function lay_duong_tu_quan_va_thanh_pho($id_tp, $id_quan)
+    // {
+    //     Model_quan::where("_province_id", $id_tp)->where("_district_id", $id_quan)->get();
 
     /**
      * Show the form for creating a new resource.

@@ -21,19 +21,23 @@ use App\Http\Controllers\Controller_dia_chi;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
-Route::get('dia_chi/all/{id}', function ($id) {
-    // return $id;
-    switch ($id) {
-        case "thanh_pho":
-        case "phuong":
-        case "quan":
-        case "duong":
-            return response()->json(DB::table($id)->get());
-            break;
-        default:
-            break;
-    }
-});
+// Route::get('dia_chi/{thanh_pho?}/{quan?}/{phuong?}', function ($id_tp, $id_quan, $id_phuong, $id) {
+//     //
+// });
+Route::get('dia_chi/{thanh_pho?}/{quan?}/{phuong?}', [Controller_dia_chi::class, 'lay_thanh_pho']);
+// Route::get('dia_chi/all/{id}', function ($id) {
+//     // return $id;
+//     switch ($id) {
+//         case "thanh_pho":
+//         case "phuong":
+//         case "quan":
+//         case "duong":
+//             return response()->json(DB::table($id)->get());
+//             break;
+//         default:
+//             break;
+//     }
+// });
 
 // Route::put('nha/dia_chi/{id}', [Controller_nha::class, 'update_hinh_by_id_nha']);
 // Route::post('hinh/{id}/update', [Controller_hinh::class, 'update_hinh']);
