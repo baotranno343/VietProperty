@@ -42,6 +42,12 @@ class Controller_khach_hang extends Controller
             ->select(DB::raw('MONTH(khach_hang.ngay_tao) as thang,count(khach_hang.id) as tong_khach_hang '))->groupBy('thang')->get();
         return $nha;
     }
+    public function dem_tong_khach_hang_da_dang_ky()
+    {
+
+        $nha = DB::table('khach_hang')->count();
+        return $nha;
+    }
     public function store(Request $request)
     {
 

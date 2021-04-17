@@ -112,6 +112,18 @@ class Controller_nha extends Controller
             ->select(DB::raw('count(nha.id) as tong_nha, quan._name as ten_quan'))->groupBy('ten_quan')->orderByDesc('tong_nha')->get();
         return $nha;
     }
+    public function dem_quan_nhieu_nha_nhat()
+    {
+
+        $nha = DB::table('nha')->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')
+            ->join('loai_nha', 'loai_nha.id', '=', 'nha.loai_nha')
+            ->join('thanh_pho', 'thanh_pho.id', '=', 'nha.thanh_pho')
+            ->join('quan', 'quan.id', '=', 'nha.quan')
+            ->join('phuong', 'phuong.id', '=', 'nha.phuong')
+            ->join('duong', 'duong.id', '=', 'nha.duong')
+            ->select(DB::raw('count(nha.id) as tong_nha, quan._name as ten_quan'))->groupBy('ten_quan')->orderByDesc('tong_nha')->limit(1)->get();
+            return $nha;
+    }
     public function dem_cac_loai_nha_dang_ban()
     {
 
@@ -136,6 +148,32 @@ class Controller_nha extends Controller
             ->join('duong', 'duong.id', '=', 'nha.duong')
             ->where("nha.trang_thai", 2)
             ->select(DB::raw('MONTH(nha.ngay_tao) as thang,count(nha.trang_thai) as da_ban '))->groupBy('thang')->get();
+        return $nha;
+    }
+    public function dem_tong_cac_nha_dang_ban()
+    {
+
+        $nha = DB::table('nha')->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')
+            ->join('loai_nha', 'loai_nha.id', '=', 'nha.loai_nha')
+            ->join('thanh_pho', 'thanh_pho.id', '=', 'nha.thanh_pho')
+            ->join('quan', 'quan.id', '=', 'nha.quan')
+            ->join('phuong', 'phuong.id', '=', 'nha.phuong')
+            ->join('duong', 'duong.id', '=', 'nha.duong')
+            ->where("nha.trang_thai", 1)
+            ->count();
+        return $nha;
+    }
+    public function dem_tong_cac_nha_da_ban()
+    {
+
+        $nha = DB::table('nha')->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')
+            ->join('loai_nha', 'loai_nha.id', '=', 'nha.loai_nha')
+            ->join('thanh_pho', 'thanh_pho.id', '=', 'nha.thanh_pho')
+            ->join('quan', 'quan.id', '=', 'nha.quan')
+            ->join('phuong', 'phuong.id', '=', 'nha.phuong')
+            ->join('duong', 'duong.id', '=', 'nha.duong')
+            ->where("nha.trang_thai", 2)
+            ->count();
         return $nha;
     }
     //thongke

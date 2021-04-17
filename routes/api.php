@@ -44,7 +44,11 @@ Route::get('dia_chi/{thanh_pho?}/{quan?}/{phuong?}', [Controller_dia_chi::class,
 Route::get('thong_ke/nha/thang', [Controller_nha::class, 'dem_cac_nha_da_ban_trong_cac_thang']);
 Route::get('thong_ke/nha/loai_nha', [Controller_nha::class, 'dem_cac_loai_nha_dang_ban']);
 Route::get('thong_ke/nha/quan', [Controller_nha::class, 'dem_nha_theo_quan_dang_ban']);
+Route::get('thong_ke/nha/quan_nhieu_nhat', [Controller_nha::class, 'dem_quan_nhieu_nha_nhat']); //
 Route::get('thong_ke/khach_hang/thang', [Controller_khach_hang::class, 'dem_cac_khach_hang_dang_ky_cac_thang']);
+Route::get('thong_ke/khach_hang/tong', [Controller_khach_hang::class, 'dem_tong_khach_hang_da_dang_ky']); //
+Route::get('thong_ke/nha/da_ban', [Controller_nha::class, 'dem_tong_cac_nha_da_ban']); //
+Route::get('thong_ke/nha/dang_ban', [Controller_nha::class, 'dem_tong_cac_nha_dang_ban']); //
 Route::post('khach_hang/login', [Controller_khach_hang::class, 'login']);
 Route::apiResource('khach_hang', Controller_khach_hang::class);
 Route::apiResource('nha', Controller_nha::class);
