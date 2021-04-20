@@ -15,6 +15,48 @@ class Controller_nha extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function hien_nha_theo_hinh_thuc($id)
+    {
+
+        $nha =  DB::table('nha')
+            ->join('loai_nha', 'loai_nha.id', '=', 'nha.loai_nha')
+            ->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')
+            ->join('thanh_pho', 'thanh_pho.id', '=', 'nha.thanh_pho')
+            ->join('quan', 'quan.id', '=', 'nha.quan')
+            ->join('phuong', 'phuong.id', '=', 'nha.phuong')
+            ->join('duong', 'duong.id', '=', 'nha.duong')
+            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")
+            ->where("hinh_thuc", $id)
+            ->get();
+        if (!$nha->isEmpty()) {
+            return response()->json(["status" => "success", "nha" => $nha]);
+        } else {
+            return response()->json(["status" => "error"]);
+        }
+
+        // return new Resource_nha($nha);
+    }
+    public function index_show()
+    {
+
+        $nha =  DB::table('nha')
+            ->join('loai_nha', 'loai_nha.id', '=', 'nha.loai_nha')
+            ->join('khach_hang', 'khach_hang.id', '=', 'nha.id_khach_hang')
+            ->join('thanh_pho', 'thanh_pho.id', '=', 'nha.thanh_pho')
+            ->join('quan', 'quan.id', '=', 'nha.quan')
+            ->join('phuong', 'phuong.id', '=', 'nha.phuong')
+            ->join('duong', 'duong.id', '=', 'nha.duong')
+            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")
+            ->where("trang_thai", 1)
+            ->get();
+        if (!$nha->isEmpty()) {
+            return response()->json(["status" => "success", "nha" => $nha]);
+        } else {
+            return response()->json(["status" => "error"]);
+        }
+
+        // return new Resource_nha($nha);
+    }
     public function index()
     {
 
@@ -27,7 +69,12 @@ class Controller_nha extends Controller
             ->join('duong', 'duong.id', '=', 'nha.duong')
             ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")
             ->get();
-        return response()->json($nha);
+        if (!$nha->isEmpty()) {
+            return response()->json(["status" => "success", "nha" => $nha]);
+        } else {
+            return response()->json(["status" => "error"]);
+        }
+
         // return new Resource_nha($nha);
     }
 
@@ -96,7 +143,11 @@ class Controller_nha extends Controller
             ->join('duong', 'duong.id', '=', 'nha.duong')
             ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner',  'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")->where('nha.id_khach_hang', $id)->get();
 
-        return response()->json(['nha' => $nha]);
+        if (!$nha->isEmpty()) {
+            return response()->json(["status" => "success", "nha" => $nha]);
+        } else {
+            return response()->json(["status" => "error"]);
+        }
     }
     //thongke
     public function dem_nha_theo_quan_dang_ban()
@@ -122,7 +173,7 @@ class Controller_nha extends Controller
             ->join('phuong', 'phuong.id', '=', 'nha.phuong')
             ->join('duong', 'duong.id', '=', 'nha.duong')
             ->select(DB::raw('count(nha.id) as tong_nha, quan._name as ten_quan'))->groupBy('ten_quan')->orderByDesc('tong_nha')->limit(1)->get();
-            return $nha;
+        return $nha;
     }
     public function dem_cac_loai_nha_dang_ban()
     {
@@ -189,8 +240,11 @@ class Controller_nha extends Controller
             ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")->where('nha.id', $id)->first();
         // print_r($nha);
         $hinh = Model_hinh::where("id_nha", $id)->get();
-
-        return response()->json(['nha' => $nha, 'hinh' => $hinh]);
+        if (!$nha->isEmpty()) {
+            return response()->json(["status" => "success", "nha" => $nha]);
+        } else {
+            return response()->json(["status" => "error"]);
+        }
     }
 
     /**
