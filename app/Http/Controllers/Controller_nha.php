@@ -27,6 +27,7 @@ class Controller_nha extends Controller
             ->join('duong', 'duong.id', '=', 'nha.duong')
             ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")
             ->where("hinh_thuc", $id)
+            ->where("trang_thai", 1)
             ->get();
         if (!$nha->isEmpty()) {
             return response()->json(["status" => "success", "nha" => $nha]);
@@ -47,8 +48,14 @@ class Controller_nha extends Controller
             ->join('phuong', 'phuong.id', '=', 'nha.phuong')
             ->join('duong', 'duong.id', '=', 'nha.duong')
             ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")
-            ->where("trang_thai", 1)
-            ->get();
+            ->where("trang_thai", 1);
+        if (request()->has('hinh_thuc')) {
+            $hinh_thuc = request()->query('hinh_thuc');
+            $nha = $nha->where("hinh_thuc", $hinh_thuc)->get();
+        } else {
+            $nha = $nha->get();
+        }
+
         if (!$nha->isEmpty()) {
             return response()->json(["status" => "success", "nha" => $nha]);
         } else {
@@ -240,8 +247,8 @@ class Controller_nha extends Controller
             ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")->where('nha.id', $id)->first();
         // print_r($nha);
         $hinh = Model_hinh::where("id_nha", $id)->get();
-        if (!$nha->isEmpty()) {
-            return response()->json(["status" => "success", "nha" => $nha]);
+        if ($nha) {
+            return response()->json(["status" => "success", "nha" => $nha, "hinh" => $hinh]);
         } else {
             return response()->json(["status" => "error"]);
         }
@@ -322,7 +329,11 @@ class Controller_nha extends Controller
                 Storage::disk('images')->delete($banner);
             }
         }
-        $nha->delete();
-        return response()->json(["status" => "success"]);
+        if ($nha) {
+            $nha->delete();
+            return response()->json(["status" => "success"]);
+        } else {
+            return response()->json(["status" => "error"]);
+        }
     }
 }

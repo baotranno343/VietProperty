@@ -17,7 +17,12 @@ class Controller_khach_hang extends Controller
     public function index()
     {
         $khach_hang = Model_khach_hang::get();
-        return response()->json($khach_hang);
+
+        if (!$khach_hang->isEmpty()) {
+            return response()->json(["status" => "success", "khach_hang" => $khach_hang]);
+        } else {
+            return response()->json(["status" => "error"]);
+        }
     }
 
     /**
@@ -96,7 +101,12 @@ class Controller_khach_hang extends Controller
      */
     public function show($id)
     {
-        return Model_khach_hang::where("id", $id)->first();
+        $khach_hang = Model_khach_hang::where("id", $id)->first();
+        if ($khach_hang) {
+            return response()->json(["status" => "success", "khach_hang" => $khach_hang]);
+        } else {
+            return response()->json(["status" => "error"]);
+        }
     }
 
     /**
@@ -151,7 +161,11 @@ class Controller_khach_hang extends Controller
                 Storage::disk('images')->delete($avatar);
             }
         }
-        Model_khach_hang::find($id)->delete();
-        return response()->json(["status" => "success"]);
+        if ($khach_hang) {
+            Model_khach_hang::find($id)->delete();
+            return response()->json(["status" => "success"]);
+        } else {
+            return response()->json(["status" => "error"]);
+        }
     }
 }
