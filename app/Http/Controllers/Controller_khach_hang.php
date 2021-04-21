@@ -59,12 +59,12 @@ class Controller_khach_hang extends Controller
         $input = $request->only(['email', 'sdt', 'mat_khau', 'ho_ten', 'dia_chi', 'chuc_vu']);
         $check_kh = Model_khach_hang::where('email', $input['email'])->first();
         $check_sdt = Model_khach_hang::where('sdt', $input['sdt'])->first();
-        if (!$check_kh) {
+        if ($check_kh) {
             return response()->json(["status" => "error", "error" => "Email Đã Tồn Tại"]);
         }
-        if (!$check_sdt) {
-            return response()->json(["status"  => "error", "error" => "SĐT Đã Tồn Tại"]);
-        }
+        // if ($check_sdt) {
+        //     return response()->json(["status"  => "error", "error" => "SĐT Đã Tồn Tại"]);
+        // }
 
         if ($file = $request->file('avatar')) {
 

@@ -53,6 +53,10 @@ Route::get('thong_ke/nha/loai_nha', [Controller_nha::class, 'dem_cac_loai_nha_da
 Route::get('thong_ke/nha/quan', [Controller_nha::class, 'dem_nha_theo_quan_dang_ban']);
 Route::get('thong_ke/khach_hang/thang', [Controller_khach_hang::class, 'dem_cac_khach_hang_dang_ky_cac_thang']);
 
+//yeu thich
+Route::get('nha/yeu_thich/{id}', [Controller_nha::class, 'show_yeu_thich_by_idkh']);
+Route::post('nha/yeu_thich', [Controller_nha::class, 'them_yeu_thich']);
+
 Route::post('khach_hang/login', [Controller_khach_hang::class, 'login']);
 Route::get('nha/show_index', [Controller_nha::class, 'index_show']);
 Route::get('nha/khach_hang/{id}', [Controller_nha::class, 'show_nha_by_idkh']);
