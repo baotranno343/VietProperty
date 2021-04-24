@@ -41,24 +41,23 @@ class Controller_hinh extends Controller
         // Model_hinh::create($request->all());
 
         $images = array();
-        if ($files = $request->file('images')) {
-            foreach ($files as $file) {
-                //  $name = uniqid() . $file->getClientOriginalName();
-                $name = uniqid() . "." . $request->file('images')->extension();
-                //   Storage::put("public", $name);
-                $file->move(public_path('images'), $name);
-                Model_hinh::insert([
-                    'id_nha' =>  $request->id_nha,
-                    'link' =>  $name,
+        if ($file = $request->file('link')) {
 
-                    //you can put other insertion here
-                ]);
-            }
+            //  $name = uniqid() . $file->getClientOriginalName();
+            $name = uniqid() . "." . $request->file('link')->extension();
+            //   Storage::put("public", $name);
+            $file->move(public_path('images'), $name);
+            Model_hinh::insert([
+                //  'id_nha' =>  $request->id_nha,
+                'link' =>  $name,
+
+                //you can put other insertion here
+            ]);
         }
         /*Insert your data*/
 
 
-        return response()->json(["status" => "success"]);
+        return response()->json(["status" => "success", "link" => $name]);
         // return response()->json(["status" => "success"]);
     }
 
@@ -94,26 +93,26 @@ class Controller_hinh extends Controller
 
     public function update(Request $request, $id)
     {
-        if ($file = $request->file('link')) {
-            $hinh = Model_hinh::where("id", $id)->first();
-            if (Storage::disk('images')->exists($hinh->link)) {
-                Storage::disk('images')->delete($hinh->link);
-            }
-            //  $name = uniqid() . $file->getClientOriginalName();
-            $name = uniqid() . "." . $file->extension();
-            //   Storage::put("public", $name);
-            $file->move(public_path('images'), $name);
-            $hinh = Model_hinh::where("id", $id)->update(['link' => $name]);
-            // Model_hinh::insert([
-            //     'id_nha' =>  $request->id_nha,
-            //     'link' =>  $name,
+        // if ($file = $request->file('link')) {
+        //     $hinh = Model_hinh::where("link", $id)->first();
+        //     if (Storage::disk('images')->exists($hinh->link)) {
+        //         Storage::disk('images')->delete($hinh->link);
+        //     }
+        //     //  $name = uniqid() . $file->getClientOriginalName();
+        //     $name = uniqid() . "." . $file->extension();
+        //     //   Storage::put("public", $name);
+        //     $file->move(public_path('images'), $name);
+        //     $hinh = Model_hinh::where("link", $id)->update(['link' => $name]);
+        //     // Model_hinh::insert([
+        //     //     'id_nha' =>  $request->id_nha,
+        //     //     'link' =>  $name,
 
-            //     //you can put other insertion here
-            // ]);
+        //     //     //you can put other insertion here
+        //     // ]);
 
-        }
+        // }
 
-        return response()->json(["status" => "success"]);
+        // return response()->json(["status" => "success"]);
     }
 
     /**
@@ -126,12 +125,12 @@ class Controller_hinh extends Controller
     {
         // Model_hinh::where("id_nha", $id)->first();
 
-        $hinh = Model_hinh::where("id", $id)->first();
+        $hinh = Model_hinh::where("link", $id)->first();
 
         if (Storage::disk('images')->exists($hinh->link)) {
             Storage::disk('images')->delete($hinh->link);
         }
-        Model_hinh::find($id)->delete();
+        Model_hinh::where("link", $id)->delete();
         return response()->json(["status" => "success"]);
     }
 }

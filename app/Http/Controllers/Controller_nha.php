@@ -26,7 +26,7 @@ class Controller_nha extends Controller
             ->join('quan', 'quan.id', '=', 'nha.quan')
             ->join('phuong', 'phuong.id', '=', 'nha.phuong')
             ->join('duong', 'duong.id', '=', 'nha.duong')
-            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")
+            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.hinh as hinh', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet")
             ->where("hinh_thuc", $id)
             ->where("trang_thai", 1)
             ->get();
@@ -48,7 +48,7 @@ class Controller_nha extends Controller
             ->join('quan', 'quan.id', '=', 'nha.quan')
             ->join('phuong', 'phuong.id', '=', 'nha.phuong')
             ->join('duong', 'duong.id', '=', 'nha.duong')
-            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet", "nha.ngay_tao as ngay_tao")
+            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.hinh as hinh', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet", "nha.ngay_tao as ngay_tao")
             ->where("trang_thai", 1);
         if (request()->has('hinh_thuc')) {
             $hinh_thuc = request()->query('hinh_thuc');
@@ -75,7 +75,7 @@ class Controller_nha extends Controller
             ->join('quan', 'quan.id', '=', 'nha.quan')
             ->join('phuong', 'phuong.id', '=', 'nha.phuong')
             ->join('duong', 'duong.id', '=', 'nha.duong')
-            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet", "nha.ngay_tao as ngay_tao")
+            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner',  'nha.hinh as hinh', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet", "nha.ngay_tao as ngay_tao")
             ->get();
         if (!$nha->isEmpty()) {
             return response()->json(["status" => "success", "nha" => $nha]);
@@ -104,7 +104,7 @@ class Controller_nha extends Controller
      */
     public function store(Request $request)
     {
-        $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'banner', 'mo_ta', 'thanh_pho', 'quan', 'phuong', 'duong', 'so_nha', 'trang_thai', 'duyet']);
+        $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'banner', 'hinh', 'mo_ta', 'thanh_pho', 'quan', 'phuong', 'duong', 'so_nha', 'trang_thai', 'duyet']);
 
 
         if ($file = $request->file('banner')) {
@@ -115,22 +115,28 @@ class Controller_nha extends Controller
         } else {
             $input["banner"] = "";
         }
-        $nha = Model_nha::create($input);
-        $nha->save();
+
         if ($files = $request->file('images')) {
-            foreach ($files as $file) {
+            $hinh = [];
+            foreach ($files as $key => $file) {
                 //  $name = uniqid() . $file->getClientOriginalName();
                 $name = uniqid() . "." . $file->extension();
                 //   Storage::put("public", $name);
                 $file->move(public_path('images'), $name);
                 Model_hinh::insert([
-                    'id_nha' =>   $nha->id,
                     'link' =>  $name,
-
                     //you can put other insertion here
                 ]);
+                array_push($hinh, $name);
             }
+            $input["hinh"] = implode(",", $hinh);
+        } else {
+            $input["hinh"] = "";
         }
+
+        $nha = Model_nha::create($input);
+        $nha->save();
+
         return response()->json(["status" => "success"]);
     }
     public function them_yeu_thich(Request $request)
@@ -166,7 +172,7 @@ class Controller_nha extends Controller
             ->join('quan', 'quan.id', '=', 'nha.quan')
             ->join('phuong', 'phuong.id', '=', 'nha.phuong')
             ->join('duong', 'duong.id', '=', 'nha.duong')
-            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner',  'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet", "nha.ngay_tao as ngay_tao")->where('nha.id_khach_hang', $id)->get();
+            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.hinh as hinh',  'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet", "nha.ngay_tao as ngay_tao")->where('nha.id_khach_hang', $id)->get();
 
         if (!$nha->isEmpty()) {
             return response()->json(["status" => "success", "nha" => $nha]);
@@ -262,11 +268,12 @@ class Controller_nha extends Controller
             ->join('quan', 'quan.id', '=', 'nha.quan')
             ->join('phuong', 'phuong.id', '=', 'nha.phuong')
             ->join('duong', 'duong.id', '=', 'nha.duong')
-            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet", "nha.ngay_tao as ngay_tao")->where('nha.id', $id)->first();
+            ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.hinh as hinh', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet", "nha.ngay_tao as ngay_tao")->where('nha.id', $id)->first();
         // print_r($nha);
-        $hinh = Model_hinh::where("id_nha", $id)->get();
+        //  echo $nha->hinh;
+
         if ($nha) {
-            return response()->json(["status" => "success", "nha" => $nha, "hinh" => $hinh]);
+            return response()->json(["status" => "success", "nha" => $nha]);
         } else {
             return response()->json(["status" => "error"]);
         }
@@ -292,7 +299,7 @@ class Controller_nha extends Controller
      */
     public function update(Request $request, $id)
     {
-        $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'banner', 'mo_ta', 'thanh_pho', 'quan', 'phuong', 'duong', 'so_nha', 'trang_thai', 'duyet']);
+        $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'banner', 'hinh', 'mo_ta', 'thanh_pho', 'quan', 'phuong', 'duong', 'so_nha', 'trang_thai', 'duyet']);
         if ($file = $request->file('banner')) {
             $nha = Model_nha::where("id", $id)->first();
             if (Storage::disk('images')->exists($nha->banner)) {
@@ -305,20 +312,7 @@ class Controller_nha extends Controller
         if ($input) {
             $nha = Model_nha::where("id", $id)->update($input);
         }
-        if ($files = $request->file('images')) {
-            foreach ($files as $file) {
-                //  $name = uniqid() . $file->getClientOriginalName();
-                $name = uniqid() . "." . $file->extension();
-                //   Storage::put("public", $name);
-                $file->move(public_path('images'), $name);
-                Model_hinh::insert([
-                    'id_nha' =>   $id,
-                    'link' =>  $name,
 
-                    //you can put other insertion here
-                ]);
-            }
-        }
 
 
         return response()->json(["status" => "success"]);
@@ -332,16 +326,26 @@ class Controller_nha extends Controller
      */
     public function destroy($id)
     {
-        $all_hinh = Model_hinh::where("id_nha", $id)->get();
-        foreach ($all_hinh as $hinh) {
-            if (Storage::disk('images')->exists($hinh->link)) {
-                Storage::disk('images')->delete($hinh->link);
+        // $all_hinh = Model_hinh::where("id_nha", $id)->get();
+        // foreach ($all_hinh as $hinh) {
+        //     if (Storage::disk('images')->exists($hinh->link)) {
+        //         Storage::disk('images')->delete($hinh->link);
+        //     }
+        // }
+        // Model_hinh::where("id_nha", $id)->delete();
+        $nha = Model_nha::find($id);
+        $all_hinh = $nha->hinh;
+        $tach_hinh = explode(",", $all_hinh);
+        if ($tach_hinh) {
+            foreach ($tach_hinh as $item) {
+                if (Storage::disk('images')->exists($item)) {
+                    Storage::disk('images')->delete($item);
+                    Model_hinh::where("link", $item)->delete();
+                }
             }
         }
-        Model_hinh::where("id_nha", $id)->delete();
-        $nha = Model_nha::find($id);
-        $banner = $nha->banner;
 
+        $banner = $nha->banner;
         if ($banner) {
             if (Storage::disk('images')->exists($banner)) {
                 Storage::disk('images')->delete($banner);
