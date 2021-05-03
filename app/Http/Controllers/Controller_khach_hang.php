@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Model_khach_hang;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class Controller_khach_hang extends Controller
 {
@@ -55,12 +56,25 @@ class Controller_khach_hang extends Controller
     }
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email:rfc,dns',
+            'ho_ten' => 'required|min:6|max:50',
+            'mat_khau' => 'required|alpha_dash|min:6|max:50',
+        ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => 'error',
+                "message" => $validator->errors(),
+            ], 422);
+        }
         $input = $request->only(['email', 'sdt', 'mat_khau', 'ho_ten', 'dia_chi', 'chuc_vu']);
         $check_kh = Model_khach_hang::where('email', $input['email'])->first();
-        $check_sdt = Model_khach_hang::where('sdt', $input['sdt'])->first();
+        // $check_sdt = Model_khach_hang::where('sdt', $input['sdt'])->first();
+
         if ($check_kh) {
-            return response()->json(["status" => "error", "error" => "Email Đã Tồn Tại"]);
+            $arr = array('email' => "Email Đã Tồn Tại");
+            return response()->json(["status" => "error", "message" => $arr]);
         }
         // if ($check_sdt) {
         //     return response()->json(["status"  => "error", "error" => "SĐT Đã Tồn Tại"]);
@@ -131,6 +145,21 @@ class Controller_khach_hang extends Controller
     public function update(Request $request, $id)
     {
         //   Model_khach_hang::where("id", $id)->update($request->all());
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email:rfc,dns',
+            'ho_ten' => 'required|min:6|max:50',
+            'mat_khau' => 'required|alpha_dash|min:6|max:50',
+            'dia_chi' => 'required|min:6|max:255',
+            'chuc_vu' => 'required|max:1',
+            'sdt' => 'required|min:3|max:15',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => 'error',
+                "message" => $validator->errors(),
+            ], 422);
+        }
         $input = $request->only(['email', 'sdt', 'mat_khau', 'ho_ten', 'dia_chi', 'chuc_vu']);
         if ($file = $request->file('avatar')) {
             $khach_hang = Model_khach_hang::where("id", $id)->first();

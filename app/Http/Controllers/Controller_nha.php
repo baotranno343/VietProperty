@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Model_hinh;
 use App\Models\Model_yeu_thich;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class Controller_nha extends Controller
 {
@@ -49,7 +50,8 @@ class Controller_nha extends Controller
             ->join('phuong', 'phuong.id', '=', 'nha.phuong')
             ->join('duong', 'duong.id', '=', 'nha.duong')
             ->select('nha.id as id_nha', 'nha.id_khach_hang as id_khach_hang', 'nha.hinh_thuc as hinh_thuc', 'loai_nha.ten as loai_nha', 'nha.lat as lat', 'nha.lon as lon', 'nha.gia as gia', 'nha.dien_tich as dien_tich', 'nha.so_phong as so_phong',  'nha.so_toilet as so_toilet', 'nha.banner as banner', 'nha.hinh as hinh', 'nha.mo_ta as mo_ta', 'thanh_pho._name as thanh_pho', 'quan._name as quan', 'phuong._name as phuong', 'duong._name as duong', 'nha.so_nha as so_nha', 'nha.trang_thai as trang_thai', "nha.duyet as duyet", "nha.ngay_tao as ngay_tao")
-            ->where("trang_thai", 1);
+            ->where("trang_thai", 1)
+            ->where("duyet", 1);
         if (request()->has('hinh_thuc')) {
             $hinh_thuc = request()->query('hinh_thuc');
             $nha = $nha->where("hinh_thuc", $hinh_thuc)->get();
@@ -104,9 +106,37 @@ class Controller_nha extends Controller
      */
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'id_khach_hang' => 'required',
+            'hinh_thuc' => 'required|max:1',
+            'loai_nha' => 'required|max:1',
+            'lat' => 'required|max:50',
+            'lon' => 'required|max:50',
+            'gia' => 'required|max:50',
+            'dien_tich' => 'required|max:20',
+            'so_phong' => 'required|max:3',
+            'hinh_thuc' => 'required|max:1',
+            'so_toilet' => 'required|max:3',
+            'banner' => 'required',
+            'images' => 'required',
+            'mo_ta' => 'required|min:6|max:255',
+            'thanh_pho' => 'required',
+            'quan' => 'required',
+            'phuong' => 'required',
+            'duong' => 'required',
+            'so_nha' => 'required',
+            'trang_thai' => 'required|max:1',
+            'duyet' => 'required|max:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => 'error',
+                "message" => $validator->errors(),
+            ], 422);
+        }
+
         $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'banner', 'hinh', 'mo_ta', 'thanh_pho', 'quan', 'phuong', 'duong', 'so_nha', 'trang_thai', 'duyet']);
-
-
         if ($file = $request->file('banner')) {
 
             $name = uniqid() . "." . $file->extension();
@@ -145,6 +175,16 @@ class Controller_nha extends Controller
         $nha = Model_yeu_thich::create($input);
         $nha->save();
         return response()->json(["status" => "success"]);
+    }
+    public function xoa_yeu_thich($id)
+    {
+        $yeu_thich = Model_yeu_thich::find($id);
+        if ($yeu_thich) {
+            $yeu_thich->delete();
+            return response()->json(["status" => "success"]);
+        } else {
+            return response()->json(["status" => "error"]);
+        }
     }
     /**
      * Display the specified resource.
@@ -299,6 +339,35 @@ class Controller_nha extends Controller
      */
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'id_khach_hang' => 'required',
+            'hinh_thuc' => 'required|max:1',
+            'loai_nha' => 'required|max:1',
+            'lat' => 'required|max:50',
+            'lon' => 'required|max:50',
+            'gia' => 'required|max:50',
+            'dien_tich' => 'required|max:20',
+            'so_phong' => 'required|max:3',
+            'hinh_thuc' => 'required|max:1',
+            'so_toilet' => 'required|max:3',
+            'banner' => 'required',
+            'hinh' => 'required',
+            'mo_ta' => 'required|min:6|max:255',
+            'thanh_pho' => 'required',
+            'quan' => 'required',
+            'phuong' => 'required',
+            'duong' => 'required',
+            'so_nha' => 'required',
+            'trang_thai' => 'required|max:1',
+            'duyet' => 'required|max:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                "status" => 'error',
+                "message" => $validator->errors(),
+            ], 422);
+        }
         $input = $request->only(['id_khach_hang', 'hinh_thuc', 'loai_nha', 'lat', 'lon', 'gia', 'dien_tich', 'so_phong', 'so_toilet', 'banner', 'hinh', 'mo_ta', 'thanh_pho', 'quan', 'phuong', 'duong', 'so_nha', 'trang_thai', 'duyet']);
         if ($file = $request->file('banner')) {
             $nha = Model_nha::where("id", $id)->first();
